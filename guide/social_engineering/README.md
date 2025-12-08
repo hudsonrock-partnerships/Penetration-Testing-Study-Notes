@@ -15,4 +15,9 @@ Social engineering leverages human psychology to gain unauthorized access or obt
 ## Advanced
 - Plan and execute multi-channel social engineering campaigns that combine email, phone, and physical tactics.
 - Analyze psychological triggers and persuasion techniques (e.g., authority, urgency, reciprocity) to enhance engagements.
-- Assess organizational security awareness programs and design bespoke social engineering assessments.
+- Assess organizational security awareness programs and design bespoke social eng
+-
+- ## Resources
+
+- **Social Engineering Toolkit:** [CyberTalents: What is Social Engineering Toolkit? Complete Guide](https://cybertalents.com/blog/what-is-social-engineering-toolkit-complete-guide) — introduces the Social Engineering Toolkit (SET), explaining how it can be used to clone websites for credential harvesting, craft realistic phishing campaigns, and understand other social engineering tools and techniques.
+ineering assessments.
