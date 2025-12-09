@@ -2,142 +2,141 @@
 
 DNS offers a variety of information about public (and sometimes private!) organization servers, such as IP addresses, server names, and server functionality.
 
-### Interacting with a DNS Server
+## Interacting with a DNS Server
 
 ```Bash
-> host -t ns megacorpone.com           # -t : type , ns: dns
-> host -t mx megacorpone.com           # mx : mail server
+host -t ns anascode.com           # -t : type , ns: dns
+host -t mx anascode.com           # mx : mail server
 ```
 
 - Also you can use `nslookup`
 
 ```Bash
-> nslookup anasboureada.com
+nslookup anascode.com
 ```
 
 - `dig` also can be used
 
 ```Bash
-> dig aboureada.com
+dig anascode.com
 ```
 
-### Automating lookups
+## Automating lookups
 
-we have some initial data from the megacorpone.com domain, we can continue to use additional DNS queries to discover more host names and IP addresses belonging to megacorpone.com.
+we have some initial data from the anascode.com domain, we can continue to use additional DNS queries to discover more host names and IP addresses belonging to anascode.com.
 
 ```Bash
-> host www.megacorpone.com             # we will found that it has an ip
-> host idontexist.megacorpone.com      # this is not found
+host www.anascode.com             # we will found that it has an ip
+host idontexist.anascode.com      # this is not found
 ```
 
-### Forward Lookup Brute Force
+## Forward Lookup Brute Force
 
 Taking the previous concept a step further, we can automate the Forward DNS Lookup of common host names using the host command and a Bash script.
 
 ```Bash
-> echo www > list.txt
-> echo ftp >> list.txt
-> echo mail >> list.txt
-> echo owa >> list.txt
-> echo proxy >> list.txt
-> echo router >> list.txt
-> echo api >> list.txt
-> for ip in $(cat list.txt);do host $ip.megacorpone.com;done
+echo www > list.txt
+echo ftp >> list.txt
+echo mail >> list.txt
+echo owa >> list.txt
+echo proxy >> list.txt
+echo router >> list.txt
+echo api >> list.txt
+for ip in $(cat list.txt);do host $ip.anascode.com;done
 ```
 
-### Reverse Lookup Brute Force
+## Reverse Lookup Brute Force
 
-If the DNS administrator of megacorpone.com configured PTR records for the domain, we might find out some more domain names that were missed during the forward lookup brute-force phase.
+If the DNS administrator of anascode.com configured PTR records for the domain, we might find out some more domain names that were missed during the forward lookup brute-force phase.
 
 ```Bash
-> for ip in $(seq 155 190);do host 50.7.67.$ip;done | grep -v "not found"
+for ip in $(seq 155 190);do host 50.7.67.$ip;done | grep -v "not found"
 # grep -v :: --invert-match
 ```
 
-#### DNS Zone Transfers
+## DNS Zone Transfers
 
 - A zone transfer is similar to a database replication act between related DNS servers.
 - This process includes the copying of the zone file from a master DNS server to a slave server.
 - The zone file contains a list of all the DNS names configured for that zone. Zone transfers should usually be limited to authorized slave DNS servers.
 
 ```Bash
-> host -l megacorpone.com ns1.megacorpone.com   # ns1 refused us our zone transfer request
+host -l anascode.com ns1.anascode.com   # ns1 refused us our zone transfer request
 # -l :: list all hosts in a domain
-> host -l megacorpone.com ns2.megacorpone.com
-# The result is a full dump of the zone file for the megacorpone.com domain,
-# providing us a convenient list of IPs and DNS names for the megacorpone.com domain.
+host -l anascode.com ns2.anascode.com
+# The result is a full dump of the zone file for the anascode.com domain,
+# providing us a convenient list of IPs and DNS names for the anascode.com domain.
 ```
 
 ```Bash
-> host -t axfr zonetransfer.me nsztm1.digi.ninja.
+host -t axfr zonetransfer.me nsztm1.digi.ninja.
 ```
 
 ```Bash
-> dig axfr nsztm1.digi.ninja zonetransfer.me
+dig axfr nsztm1.digi.ninja zonetransfer.me
 ```
 
 - Now Lets automate the process:
 
   - To get the name servers for a given domain in a clean format, we can issue the following command.
 
-    ```Bash
-    > host -t ns megacorpone.com | cut -d " " -f 4
-    # -d :: --delimiter=DELIM ;
-    # -f ::  --fields=LIST select only these fields on each line;
-    ````
+```Bash
+host -t ns anascode.com | cut -d " " -f 4
+# -d :: --delimiter=DELIM ;
+# -f ::  --fields=LIST select only these fields on each line;
+```
 
-  - Taking this a step further, we could write the following simple Bash script to automate the procedure of discovering and attempting a zone transfer on each DNS server found.
+- Taking this a step further, we could write the following simple Bash script to automate the procedure of discovering and attempting a zone transfer on each DNS server found.
 
-    ```Bash
-    # /bin/bash
-    # Simple Zone Transfer Bash Script
-    # $1 is the first argument given after the bash script
-    # Check if argument was given, if not, print usage
-    if  [-z "$1" ]; then
-    echo "[-] Simple Zone transfer script"
-    echo "[-] Usage : $0 <domain name> "
-    exit 0
-    fi
+```Bash
+# /bin/bash
+# Simple Zone Transfer Bash Script
+# $1 is the first argument given after the bash script
+# Check if argument was given, if not, print usage
+if  [-z "$1" ]; then
+echo "[-] Simple Zone transfer script"
+echo "[-] Usage : $0 <domain name> "
+exit 0
+fi
+# if argument was given, identify the DNS servers for the domain
+for server in $(host ­-t ns $1 | cut ­-d" " ­-f4);do
+# For each of these servers, attempt a zone transfer
+host -l $1 $server | grep "has address"
+done
+```
 
-    # if argument was given, identify the DNS servers for the domain
-    for server in $(host ­-t ns $1 | cut ­-d" " ­-f4);do
-    # For each of these servers, attempt a zone transfer
-    host -l $1 $server | grep "has address"
-    done
-    ```
+Running this script on anascode.com should automatically identify both name servers and attempt a zone transfer on each of them
 
-    Running this script on megacorpone.com should automatically identify both name servers and attempt a zone transfer on each of them
+```Bash
+chmod 755 dns-­-axfr.sh
+./dns-­-axfr.sh anascode.com
+```
 
-    ```Bash
-    > chmod 755 dns-­-axfr.sh
-    > ./dns-­-axfr.sh megacorpone.com
-    ```
+## Relevant Tools in Kali Linux
 
-### Relevant Tools in Kali Linux
+### DNSRecon
 
-#### DNSRecon
+```Bash
+dnsrecon -d anascode.com -t axfr
+# -d :: domain
+# -t :: type of Enumeration to perform
+# axfr :: test all ns servers for zone transfer
+```
 
-  ```Bash
-  > dnsrecon -d megacorpone.com -t axfr
-  # -d :: domain
-  # -t :: type of Enumeration to perform
-  # axfr :: test all ns servers for zone transfer
-  ```
+### DNSEnum
 
-#### DNSEnum
-
-  ```Bash
-  > dnsenum zonetransfer.me
-  ```
+```Bash
+dnsenum anascode.com
+```
 
 #### fierce
 
 **NOTE** the one included in the latest version of kali may not work, so try to install the new version from [fierce](https://github.com/mschwager/fierce)
 
-  ```Bash
-  > pip3 install fierce
-  > fierce --domain zonetransfer.me
-  ```
+```Bash
+> pip3 install fierce
+> fierce --domain zonetransfer.me
+```
 
 - NMAP DNS Hostnames Lookup
 
@@ -148,7 +147,7 @@ nmap -F --dns-server
 - Host Lookup
 
 ```ShellSession
-host -t ns [megacorpone.com](http://megacorpone.com/)
+host -t ns [anascode.com](http://anascode.com/)
 ```
 
 - Reverse Lookup Brute Force - find domains in the same range
@@ -198,7 +197,7 @@ dnsrecon -d TARGET -D /usr/share/wordlists/dnsmap.txt -t std --xml ouput.xml
 - Dnsrecon DNS List of megacorp
 
 ```ShellSession
-dnsrecon -d [megacorpone.com](http://megacorpone.com/) -t axfr
+dnsrecon -d [anascode.com](http://anascode.com/) -t axfr
 ```
 
 - DNSEnum
