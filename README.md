@@ -108,7 +108,7 @@ cat subdomains.txt| wc -l
 ## Check https://dnsdumpster.com/ it has nice graph
 ```
 
-### Get live subdomains
+### Get Live Subdomains
 
 ```bash
 ~/go/bin/httpx -l subdomains.txt -o subdomains-live.txt
@@ -136,7 +136,7 @@ subzy run --targets subdomains.txt --timeout 20 --output subdomain_subzy.txt
 subjack -w subdomains.txt -t 100 -timeout 30 -o subdomain_subjack.txt -ssl
 ```
 
-### Get Screenshots of the live subdomians
+### Get Screenshots of the Live Subdomians
 
 ```bash
 eyewitness -f subdomains-live.txt --web -d screenshots --timeout 100 --delay 10 --proxy-ip 127.0.0.1 --proxy-port 8080
@@ -223,7 +223,7 @@ naabu -iL subdomains-live.txt -silent -exclude-cdn -top-ports 1000 -o ports.txt
    3. Monitor the target's social media accounts
    4. [change detection](https://changedetection.io/)
 
-### Questions to ask yourself when doing content discovery
+### Questions to Ask Yourself when Doing Content Discovery
 
 1. How does the app pass data?
    1. resource?parameter=value&parameter2=value2
@@ -243,22 +243,19 @@ naabu -iL subdomains-live.txt -silent -exclude-cdn -top-ports 1000 -o ports.txt
    2. user
    3. guest
 4. Does the site has a unique threat model?
-   1. Is it a bank, hospital, streaming service, ...?
-   2. You need to test for special api keys, tokens, ...
+   1. Is it a bank, hospital, streaming service, …?
+   2. You need to test for special api keys, tokens, …
 5. Has there past security research and vuln?
-   1. check hackerone, bugcrowd, ...
+   1. check hackerone, bugcrowd, …
 6. How the app handles these:
    1. XSS
    2. CSRF
-   3. Code Injection (SQLi,Template, RCE, noSQL, ...)
+   3. Code Injection (SQLi,Template, RCE, noSQL, …)
 
 - Spider using Burp Suite or OWASP ZAP or [Hakrawler](https://github.com/hakluke/hakrawler) or [Gospider](https://github.com/jaeles-project/gospider)
-
 - Extact links and parse js and spider and inline javascript
-
   - Using [xnLinkFinder](https://github.com/xnl-h4ck3r/xnLinkFinder)`xnLinkFinder -i tesla.com -d 2 -sp https://tesla.com -o tesla.txt`
   - Using [GAP](https://github.com/xnl-h4ck3r/GAP-Burp-Extension) Burp Extension
-
 - Check for oudated js libraries using RetireJS in Burp Suite
 
 ### Heat Mapping / Content Discovery
@@ -267,9 +264,9 @@ naabu -iL subdomains-live.txt -silent -exclude-cdn -top-ports 1000 -o ports.txt
    1. Integrations (From 3rd party)
       1. XSS
    2. Self Uploads
-      1. XML Based (Docs, PDFs, ...)
+      1. XML Based (Docs, PDFs, …)
          1. SSRF, XSS
-      2. Image Based (JPG, PNG, ...)
+      2. Image Based (JPG, PNG, …)
          1. Shell, XSS
             1. Name
             2. Binary Header
@@ -295,7 +292,6 @@ naabu -iL subdomains-live.txt -silent -exclude-cdn -top-ports 1000 -o ports.txt
 
 - Use [GF-Patterns](https://github.com/1ndianl33t/Gf-Patterns) to find parameters
 - Use [sus_params](https://github.com/g0ldencybersec/sus_params)
-
 - Run this script [content-discovery.sh](./scripts/content-discovery.sh)
 
 `feroxbuster -u http://localhost:3000/#/ --extract-links -o links.txt --filter-status 404 500 --rate-limit 100 --scan-limit 1 -t 10 --random-agent `
@@ -310,17 +306,15 @@ curl $TARGET/favicon.ico | md5sum
 - Check /sitemap.xml
 - Check HTTP headers
 - Use google dorks
-
   - site: target.com
     - inrul:admin
     - filetype:pdf
     - intitle:admin
-
-- Check https://archive.org/web/
+- Check <https://archive.org/web/>
 - Check Github / Gitlab / Bitbucket
-- Search in target tab in Burp Suite for words like: path, link, ...
+- Search in target tab in Burp Suite for words like: path, link, …
 
-### Get S3 buckets
+### Get S3 Buckets
 
 ```bash
 slurp domain -t booking.com
@@ -329,7 +323,7 @@ slurp domain -t booking.com
 # also check this https://github.com/nikhil1232/Bucket-Flaws
 ```
 
-### Add all live domains to burpsuite
+### Add All Live Domains to Burpsuite
 
 ```bash
 cat subdomains-live.txt | xargs -P 10 -I {} curl -k -x http://localhost:8080 {} -o /dev/null
@@ -337,11 +331,11 @@ cat subdomains-live.txt | xargs -P 10 -I {} curl -k -x http://localhost:8080 {} 
 
 ### Get IPs, PORTS, and Services
 
-- Go to https://www.shodan.io/
+- Go to <https://www.shodan.io/>
   - Search: `org:"TARGET.com"`
   - OR `ssl:"TARGET.com"`
 
-### Get Broken social links
+### Get Broken Social Links
 
 ```bash
 socialhunter -f subdomains-live.txt -w 10 > sociallinks-hunting.txt
@@ -442,11 +436,11 @@ This type of vulnerability can occur when a web server receives user-supplied in
 - you should check prarameters like `/?userId=123`
   - it can be hashed
   - it can be encoded
-  - if it’s unpredictable like uuid, you should create 2 accounts and try to swap their ids and see if you can access each other’s private content like profiles
+  - if it's unpredictable like uuid, you should create 2 accounts and try to swap their ids and see if you can access each other's private content like profiles
 
 ## Tips and Tricks
 
-### Start a local server to serve local files in a directory
+### Start a Local Server to Serve Local Files in a Directory
 
 ```bash
 
@@ -454,7 +448,7 @@ python3 -m http.server 8000
 
 ```
 
-### Listen to a local port
+### Listen to a Local Port
 
 ```bash
 nc -nlvp 9001
